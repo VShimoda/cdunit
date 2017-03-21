@@ -82,4 +82,3 @@ const testConfig = `testcase "test1" {
 		host = "www.example.com"
 	}
 }`
-

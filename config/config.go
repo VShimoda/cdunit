@@ -52,11 +52,11 @@ func ParseConfig(hclText string) (*Config, error) {
 
 	hclParseTree, err := hcl.Parse(hclText)
 	if err != nil {
-		return nil, err
+		return nil, multierror.Append(errors, err)
 	}
 
 	if err := hcl.DecodeObject(&result, hclParseTree); err != nil {
-		return nil, err
+		return nil, multierror.Append(errors, err)
 	}
 
 	log.Printf("%+v\n", result)

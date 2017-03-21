@@ -14,35 +14,59 @@ type Config struct {
 
 // TestCase type
 type TestCase struct {
-	Name   string `hcl:",key"`
-	CDN    string `hcl:"cdn"`
-	URL    URL    `hcl:"url"`
+	// Name is required
+	Name string `hcl:",key"`
+	// CDN supported "akamai" only
+	CDN string `hcl:"cdn"`
+	// URL is required
+	URL URL `hcl:"url"`
+	// Assert is required
 	Assert Assert `hcl:"assert"`
 }
 
+// URL is reuqired for testing
 type URL struct {
-	Protocol string   `hcl:"protocol"`
-	Host     string   `hcl:"host"`
-	Path     string   `hcl:"path"`
-	Headers  []Header `hcl:"header"`
-	Cookies  []Cookie `hcl:"cookie"`
+	// Protocol is http or https
+	Protocol string `hcl:"protocol"`
+	// Host is a domain
+	Host string `hcl:"host"`
+	// Method is not required, default is get Method
+	Method string `hcl:"method"`
+	// path is not required, "" should be ok
+	Path string `hcl:"path"`
+	// header is not required
+	Headers []Header `hcl:"header"`
+	// cookie is not required
+	Cookies []Cookie `hcl:"cookie"`
 }
 
+// Header is request header, for example "User-Agent"
 type Header struct {
-	Key   string `hcl:"key"`
+	// if Header is not nil then Key is required
+	Key string `hcl:"key"`
+	// if Header is not nil then Value is required
 	Value string `hcl:"value"`
 }
 
+// Cookie is request cookie, should be baked for another request
 type Cookie struct {
-	Key   string `hcl:"key"`
+	// if Cookie is not nil then Key is required
+	Key string `hcl:"key"`
+	// if Value is not nil then Value is required
 	Value string `hcl:"value"`
 }
 
+// Assert is required for testing
 type Assert struct {
-	StatusCode int    `hcl:"statuscode"`
-	Host       string `hcl:"host"`
-	Cachable   bool   `hcl:"cachable"`
-	TTL        string `hcl:"ttl"`
+	// StatusCode is required for testing
+	StatusCode int `hcl:"statuscode"`
+	//Akamai assert
+	// Host is not host header, it search in "x-cache-key"
+	Host string `hcl:"host"`
+	// Cachable is check response header "x-check-cacheable"
+	Cachable bool `hcl:"cachable"`
+	// TTL is check response header in "x-cheche-key"
+	TTL string `hcl:"ttl"`
 }
 
 // ParseConfig parse the given HCL string into a Config struct.
@@ -64,3 +88,8 @@ func ParseConfig(hclText string) (*Config, error) {
 	return result, errors.ErrorOrNil()
 }
 
+// ValidateConfig is to validate config struct
+func (config *Config) ValidateConfig() error {
+	var errors *multierror.Error
+	return errors.ErrorOrNil()
+}
